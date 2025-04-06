@@ -68,4 +68,11 @@ public class ChessNetworkController : NetworkBehaviour
         // Instead of GameManager.Instance.LoadGame(serializedGame);
         GameManager.Instance.LoadGame(serializedGame);
     }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void RequestResignServerRpc()
+    {
+        // Only the server can call Resign
+        GameManager.Instance.Resign();
+    }
 }

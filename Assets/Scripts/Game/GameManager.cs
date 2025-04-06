@@ -184,10 +184,20 @@ public class GameManager : MonoBehaviourSingleton<GameManager> {
 		HalfMoveTimeline.TryGetCurrent(out HalfMove latestHalfMove);
 		
 		// If the latest move resulted in checkmate or stalemate, disable further moves.
-		if (latestHalfMove.CausedCheckmate || latestHalfMove.CausedStalemate) {
-			BoardManager.Instance.SetActiveAllPieces(false);
-			GameEndedEvent?.Invoke();
-		} else {
+		if (latestHalfMove.CausedCheckmate) {
+    		BoardManager.Instance.SetActiveAllPieces(false);
+    		string winningSide = (SideToMove == Side.White) ? "Black" : "White";
+    		string message = $"Checkmate! {winningSide} wins!";
+    		GameEndedEvent?.Invoke();
+    		GameEndNotifier.Instance.NotifyGameEnd(message);
+		} 
+		else if (latestHalfMove.CausedStalemate) {
+    		BoardManager.Instance.SetActiveAllPieces(false);
+    		string message = "Stalemate! Draw.";
+    		GameEndedEvent?.Invoke();
+    		GameEndNotifier.Instance.NotifyGameEnd(message);
+		} 
+		else {
 			// Otherwise, ensure that only the pieces of the side to move are enabled.
 			BoardManager.Instance.EnsureOnlyPiecesOfSideAreEnabled(SideToMove);
 		}
@@ -337,6 +347,21 @@ public class GameManager : MonoBehaviourSingleton<GameManager> {
     	// (Originally TryExecuteMove was private; now we expose it via this wrapper.)
     	return TryExecuteMove(move);
 	}
+
+	public void Resign()
+	{
+    	// Ensure this is only processed on the server.
+    	if (!Unity.Netcode.NetworkManager.Singleton.IsServer)
+        	return;
+        
+    	string resigningSide = SideToMove.ToString();
+    	string winningSide = (SideToMove == Side.White) ? "Black" : "White";
+    	string message = $"{resigningSide} resigned. {winningSide} wins!";
+    	BoardManager.Instance.SetActiveAllPieces(false);
+    	GameEndedEvent?.Invoke();
+    	GameEndNotifier.Instance.NotifyGameEnd(message);
+	}
+
 
 	
 	/// <summary>

@@ -67,6 +67,11 @@ public class UIManager : MonoBehaviourSingleton<UIManager> {
 		);
 	}
 
+	private void Awake()
+	{
+    	Debug.Log("UIManager instance created on " + gameObject.name);
+	}
+
 	/// <summary>
 	/// Handles the event when a new game starts.
 	/// Clears previous move history, updates UI fields, and resets result text.
@@ -287,6 +292,37 @@ public class UIManager : MonoBehaviourSingleton<UIManager> {
 		// Enable the Black turn indicator if it is Black's turn.
 		blackTurnIndicator.enabled = sideToMove == Side.Black;
 	}
+
+	public void ShowGameEndMessage(string message)
+	{
+    	resultText.text = message;
+    	resultText.gameObject.SetActive(true);
+	}
+
+	public void OnResignButton()
+	{
+    	// If we are a client (and not the host), request resignation via the server.
+    	if (Unity.Netcode.NetworkManager.Singleton != null &&
+        	Unity.Netcode.NetworkManager.Singleton.IsClient &&
+        	!Unity.Netcode.NetworkManager.Singleton.IsServer)
+    	{
+        	ChessNetworkController netController = FindObjectOfType<ChessNetworkController>();
+        	if (netController != null)
+        	{
+            	netController.RequestResignServerRpc();
+        	}
+        	else
+        	{
+            	Debug.LogWarning("ChessNetworkController not found in scene!");
+        	}
+    	}
+    	else
+    	{
+        	// Otherwise (host or single-player), call the Resign method directly.
+        	GameManager.Instance.Resign();
+    	}
+	}
+
 
 	/// <summary>
 	/// Updates the game string input field with the current serialized game state.
