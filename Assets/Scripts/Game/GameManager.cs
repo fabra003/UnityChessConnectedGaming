@@ -329,6 +329,15 @@ public class GameManager : MonoBehaviourSingleton<GameManager> {
 			movedPieceTransform.position = closestBoardSquareTransform.position;
 		}
 	}
+
+	// New public method added to GameManager.cs to support network move execution.
+	public bool NetworkExecuteMove(Movement move)
+	{
+    	// Call the existing move execution logic.
+    	// (Originally TryExecuteMove was private; now we expose it via this wrapper.)
+    	return TryExecuteMove(move);
+	}
+
 	
 	/// <summary>
 	/// Determines whether the specified piece has any legal moves.

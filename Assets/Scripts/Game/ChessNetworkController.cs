@@ -30,6 +30,11 @@ public class ChessNetworkController : NetworkBehaviour
         if (requesterSide != GameManager.Instance.SideToMove)
         {
             Debug.LogWarning($"Move rejected. It is not {requesterSide}'s turn.");
+
+            // Immediately sync the current board state so the client reverts the piece
+            string serializedGame = GameManager.Instance.SerializeGame();
+            SyncGameStateClientRpc(serializedGame);
+
             return;
         }
 
@@ -51,14 +56,16 @@ public class ChessNetworkController : NetworkBehaviour
         else
         {
             Debug.LogWarning("Move execution failed on server.");
+            // Also revert if the move fails for any other reason:
+            string serializedGame = GameManager.Instance.SerializeGame();
+            SyncGameStateClientRpc(serializedGame);
         }
     }
 
-    // This ClientRpc sends the new serialized game state (FEN) to all clients so they can update their boards.
     [ClientRpc]
     private void SyncGameStateClientRpc(string serializedGame)
     {
-        // On each client, load the new game state.
+        // Instead of GameManager.Instance.LoadGame(serializedGame);
         GameManager.Instance.LoadGame(serializedGame);
     }
 }

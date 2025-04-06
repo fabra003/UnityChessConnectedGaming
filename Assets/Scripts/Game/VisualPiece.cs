@@ -79,38 +79,49 @@ public class VisualPiece : MonoBehaviour {
 	/// Determines the closest board square to the piece and raises an event with the move.
 	/// </summary>
 	public void OnMouseUp() {
-		if (enabled) {
-			// Clear any previous potential landing square candidates.
-			potentialLandingSquares.Clear();
-			// Obtain all square GameObjects within the collision radius of the piece's current position.
-			BoardManager.Instance.GetSquareGOsWithinRadius(potentialLandingSquares, thisTransform.position, SquareCollisionRadius);
+    	if (enabled) {
+        	// Clear any previous potential landing square candidates.
+        	potentialLandingSquares.Clear();
+        	// Obtain all square GameObjects within the collision radius of the piece's current position.
+        	BoardManager.Instance.GetSquareGOsWithinRadius(potentialLandingSquares, thisTransform.position, SquareCollisionRadius);
 
-			// If no squares are found, assume the piece was moved off the board and reset its position.
-			if (potentialLandingSquares.Count == 0) { // piece moved off board
-				thisTransform.position = thisTransform.parent.position;
-				return;
-			}
-	
-			// Determine the closest square from the list of potential landing squares.
-			Transform closestSquareTransform = potentialLandingSquares[0].transform;
-			// Calculate the square of the distance between the piece and the first candidate square.
-			float shortestDistanceFromPieceSquared = (closestSquareTransform.position - thisTransform.position).sqrMagnitude;
-			
-			// Iterate through remaining potential squares to find the closest one.
-			for (int i = 1; i < potentialLandingSquares.Count; i++) {
-				GameObject potentialLandingSquare = potentialLandingSquares[i];
-				// Calculate the squared distance from the piece to the candidate square.
-				float distanceFromPieceSquared = (potentialLandingSquare.transform.position - thisTransform.position).sqrMagnitude;
+        	// If no squares are found, assume the piece was moved off the board and reset its position.
+        	if (potentialLandingSquares.Count == 0) { 
+            	thisTransform.position = thisTransform.parent.position;
+            	return;
+        	}
 
-				// If the current candidate is closer than the previous closest, update the closest square.
-				if (distanceFromPieceSquared < shortestDistanceFromPieceSquared) {
-					shortestDistanceFromPieceSquared = distanceFromPieceSquared;
-					closestSquareTransform = potentialLandingSquare.transform;
-				}
-			}
+        	// Determine the closest square from the list of potential landing squares.
+        	Transform closestSquareTransform = potentialLandingSquares[0].transform;
+        	float shortestDistanceFromPieceSquared = (closestSquareTransform.position - thisTransform.position).sqrMagnitude;
+        
+        	// Iterate through remaining potential squares to find the closest one.
+        	for (int i = 1; i < potentialLandingSquares.Count; i++) {
+            	GameObject potentialLandingSquare = potentialLandingSquares[i];
+            	float distanceFromPieceSquared = (potentialLandingSquare.transform.position - thisTransform.position).sqrMagnitude;
+            	if (distanceFromPieceSquared < shortestDistanceFromPieceSquared) {
+                	shortestDistanceFromPieceSquared = distanceFromPieceSquared;
+                	closestSquareTransform = potentialLandingSquare.transform;
+            	}
+        	}
 
-			// Raise the VisualPieceMoved event with the initial square, the piece's transform, and the closest square transform.
-			VisualPieceMoved?.Invoke(CurrentSquare, thisTransform, closestSquareTransform);
-		}
+        	// Multiplayer integration:
+        	// If the NetworkManager is connected, call the ChessNetworkController's RequestMove method.
+        	if (Unity.Netcode.NetworkManager.Singleton != null && Unity.Netcode.NetworkManager.Singleton.IsConnectedClient) {
+            	ChessNetworkController networkController = FindObjectOfType<ChessNetworkController>();
+            	if (networkController != null) {
+                	// Use the square's string representations (e.g., "e2", "e4")
+                	networkController.RequestMove(CurrentSquare.ToString(), closestSquareTransform.name);
+            	}
+            	else {
+                	Debug.LogWarning("ChessNetworkController not found; falling back to local move event.");
+                	VisualPieceMoved?.Invoke(CurrentSquare, thisTransform, closestSquareTransform);
+            	}
+        	}
+        	else {
+            	// In single-player or if networking isn't active, raise the local event.
+            	VisualPieceMoved?.Invoke(CurrentSquare, thisTransform, closestSquareTransform);
+        	}
+    	}
 	}
 }
