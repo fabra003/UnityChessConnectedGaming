@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "131674566399",
+    "project_id": "unitychess-12876",
+    "storage_bucket": "unitychess-12876.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:131674566399:android:c0cc65ba2734ed3be966ca",
+        "android_client_info": {
+          "package_name": "com.ConectedGaming.UnityChess"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDaFjcPBVCe2CXAj1VcOTGIqAQYolQCgUI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

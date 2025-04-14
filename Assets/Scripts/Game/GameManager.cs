@@ -133,6 +133,12 @@ public class GameManager : MonoBehaviourSingleton<GameManager> {
 	public async void StartNewGame() {
 		game = new Game();
 		NewGameStartedEvent?.Invoke();
+
+		// Wait briefly to ensure Firebase initialization completes.
+    	await Task.Delay(500);
+
+		if (FirebaseAnalyticsManager.Instance != null)
+        FirebaseAnalyticsManager.Instance.LogMatchStart();
 	}
 
 	/// <summary>
@@ -190,12 +196,18 @@ public class GameManager : MonoBehaviourSingleton<GameManager> {
     		string message = $"Checkmate! {winningSide} wins!";
     		GameEndedEvent?.Invoke();
     		GameEndNotifier.Instance.NotifyGameEnd(message);
+
+			if (FirebaseAnalyticsManager.Instance != null)
+        	FirebaseAnalyticsManager.Instance.LogMatchEnd("checkmate", winningSide);
 		} 
 		else if (latestHalfMove.CausedStalemate) {
     		BoardManager.Instance.SetActiveAllPieces(false);
     		string message = "Stalemate! Draw.";
     		GameEndedEvent?.Invoke();
     		GameEndNotifier.Instance.NotifyGameEnd(message);
+
+			if (FirebaseAnalyticsManager.Instance != null)
+        	FirebaseAnalyticsManager.Instance.LogMatchEnd("stalemate", "none");
 		} 
 		else {
 			// Otherwise, ensure that only the pieces of the side to move are enabled.
@@ -360,7 +372,49 @@ public class GameManager : MonoBehaviourSingleton<GameManager> {
     	BoardManager.Instance.SetActiveAllPieces(false);
     	GameEndedEvent?.Invoke();
     	GameEndNotifier.Instance.NotifyGameEnd(message);
+
+		if (FirebaseAnalyticsManager.Instance != null)
+        FirebaseAnalyticsManager.Instance.LogMatchEnd("resignation", winningSide);
 	}
+
+	public void ApplyMaterialToSide(Side side, Material newMaterial)
+	{
+    	try {
+        	for (int file = 1; file <= 8; file++)
+        	{
+            	for (int rank = 1; rank <= 8; rank++)
+            	{
+                	Piece piece = CurrentBoard[file, rank];
+                	if (piece != null && piece.Owner == side)
+                	{
+                    	GameObject pieceGO = BoardManager.Instance.GetPieceGOAtPosition(new Square(file, rank));
+                    	if (pieceGO != null)
+                    	{
+                        	Renderer rend = pieceGO.GetComponent<Renderer>();
+                        	if (rend != null)
+                        	{
+                            	rend.material = newMaterial;
+                        	}
+                        	else
+                        	{
+                            	Debug.LogWarning($"Renderer missing on piece at Square {file},{rank}");
+                        	}
+                    	}
+                    	else
+                    	{
+                        	Debug.LogWarning($"GameObject for piece at Square {file},{rank} is null");
+                    	}
+                	}
+            	}
+        	}
+    	}
+    	catch (System.Exception ex)
+    	{
+        	Debug.LogError("ApplyMaterialToSide threw an exception: " + ex + "\n" + ex.StackTrace);
+    	}
+	}
+
+
 
 
 	

@@ -42,6 +42,8 @@ public class UIManager : MonoBehaviourSingleton<UIManager> {
 	// Computed button colour based on the background colour and darkening factor.
 	private Color buttonColor;
 
+	private string lastSavedGameId;
+
 	/// <summary>
 	/// Initialises the UIManager, subscribes to game events, and configures initial UI settings.
 	/// </summary>
@@ -323,6 +325,41 @@ public class UIManager : MonoBehaviourSingleton<UIManager> {
     	}
 	}
 
+	public void OnSaveGameButtonClicked()
+    {
+        string serializedGame = GameManager.Instance.SerializeGame();
+        FirebaseAnalyticsManager.Instance.SaveGameState(serializedGame, (gameId) =>
+        {
+            if (!string.IsNullOrEmpty(gameId))
+            {
+                lastSavedGameId = gameId;
+                Debug.Log("Saved game ID is now stored: " + lastSavedGameId);
+            }
+        });
+    }
+
+    public void OnRestoreGameButtonClicked()
+    {
+        // Use the stored lastSavedGameId
+        if (string.IsNullOrEmpty(lastSavedGameId))
+        {
+            Debug.LogWarning("No saved game ID available to restore.");
+            return;
+        }
+
+        FirebaseAnalyticsManager.Instance.RetrieveGameState(lastSavedGameId, (serializedGameState) =>
+        {
+            if (!string.IsNullOrEmpty(serializedGameState))
+            {
+                GameManager.Instance.LoadGame(serializedGameState);
+                Debug.Log("Restored game with ID: " + lastSavedGameId);
+            }
+            else
+            {
+                Debug.LogError("Failed to retrieve the saved game state for ID: " + lastSavedGameId);
+            }
+        });
+    }
 
 	/// <summary>
 	/// Updates the game string input field with the current serialized game state.

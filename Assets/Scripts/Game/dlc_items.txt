@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DLCItems>
+  <DLCItem>
+    <itemID>avatar1</itemID>
+    <displayName>Bombardino Crocodillo</displayName>
+    <imageUrl>https://firebasestorage.googleapis.com/v0/b/unitychess-12876.firebasestorage.app/o/avatar1.png?alt=media&amp;token=1f1008f0-3c23-446b-ac21-9b999c3e1cb8</imageUrl>
+    <price>50.0</price>
+  </DLCItem>
+  <DLCItem>
+    <itemID>avatar2</itemID>
+    <displayName>Crocodillo Formaggioso</displayName>
+    <imageUrl>https://firebasestorage.googleapis.com/v0/b/unitychess-12876.firebasestorage.app/o/avatar2.png?alt=media&amp;token=45c95ec0-bb57-44ce-aa7a-715e8fd4fa96</imageUrl>
+    <price>50.0</price>
+  </DLCItem>
+  <DLCItem>
+    <itemID>avatar3</itemID>
+    <displayName>Lirili Larila</displayName>
+    <imageUrl>https://firebasestorage.googleapis.com/v0/b/unitychess-12876.firebasestorage.app/o/avatar3.png?alt=media&amp;token=3573b8d2-b102-4904-97f2-095fafd54abe</imageUrl>
+    <price>50.0</price>
+  </DLCItem>
+  <DLCItem>
+    <itemID>avatar4</itemID>
+    <displayName>Tung Tung Tung Sahur</displayName>
+    <imageUrl>https://firebasestorage.googleapis.com/v0/b/unitychess-12876.firebasestorage.app/o/avatar4.png?alt=media&amp;token=e399ab0b-8b69-4ca1-a2dc-ed7a3c8c15b2</imageUrl>
+    <price>50.0</price>
+  </DLCItem>
+  <DLCItem>
+    <itemID>avatar5</itemID>
+    <displayName>Tralalero Tralala</displayName>
+    <imageUrl>https://firebasestorage.googleapis.com/v0/b/unitychess-12876.firebasestorage.app/o/avatar5.png?alt=media&amp;token=9bdb15ae-39cd-4f45-befa-a7b16fa645b0</imageUrl>
+    <price>50.0</price>
+  </DLCItem>
+  <DLCItem>
+    <itemID>avatar6</itemID>
+    <displayName>John Pork</displayName>
+    <imageUrl>https://firebasestorage.googleapis.com/v0/b/unitychess-12876.firebasestorage.app/o/avatar6.png?alt=media&amp;token=b4a4bb37-31ef-4164-928e-b00d2eaea199</imageUrl>
+    <price>50.0</price>
+  </DLCItem>
+  <DLCItem>
+    <itemID>avatar7</itemID>
+    <displayName>Trulimero Trulichina</displayName>
+    <imageUrl>https://firebasestorage.googleapis.com/v0/b/unitychess-12876.firebasestorage.app/o/avatar7.png?alt=media&amp;token=d757d7c8-641c-46f9-9d12-9292be5f7101</imageUrl>
+    <price>50.0</price>
+  </DLCItem>
+  <DLCItem>
+    <itemID>avatar8</itemID>
+    <displayName>Brr Brr Patapim</displayName>
+    <imageUrl>https://firebasestorage.googleapis.com/v0/b/unitychess-12876.firebasestorage.app/o/avatar8.png?alt=media&amp;token=fcc5994e-2d10-4ff5-a4ea-de768b75ad8c</imageUrl>
+    <price>50.0</price>
+  </DLCItem>
+</DLCItems>
